@@ -1,0 +1,65 @@
+@import "~materialize-css/dist/css/materialize.min.css";
+
+$border: 1px solid black;
+
+.card {
+  padding: 1rem;
+  border-radius: 1rem;
+  border: $border;
+  h2 {
+    color: rebeccapurple;
+  }
+}
+
+.mr10{
+  margin-right: 10px;
+}
+
+.large-button {
+  .btn-large{
+    width: 100%;
+  }
+}
+
+.scroll {
+  max-height: 150px;
+  overflow: auto;
+}
+
+.secondary-content{
+  .material-icons{
+    margin: 0 .5rem;
+  }
+}
+
+
+.collection-item label {
+  width: 100%; 
+  cursor: pointer; 
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute-right {
+  position: absolute;
+  right: 0;
+  .material-icons{
+    cursor: pointer;
+  }
+}
+.pointer{
+  cursor: pointer;
+}
+.flex {
+  display: flex;
+}
+
+button:focus {
+  border: 1px solid black;
+}
+
+.pl20{
+  padding-left: 16px;
+}
