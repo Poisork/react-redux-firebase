@@ -1,7 +1,9 @@
-import { SET_PROJECTS } from '../actions/actionTypes'
+import { OrderedMap } from 'immutable'
+
+export const SET_PROJECTS = 'SET_PROJECTS'
 
 const initialState = {
-  data: []
+  data: OrderedMap()
 }
 
 const projects = (state = initialState, action) => {
@@ -16,6 +18,10 @@ const projects = (state = initialState, action) => {
     }
   }
 }
+
+/* Action Creators */
+
+export const setProjects = payload => ({ type: SET_PROJECTS, payload })
 
 /* Selectors */
 

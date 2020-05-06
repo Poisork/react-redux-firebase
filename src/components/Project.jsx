@@ -1,6 +1,7 @@
 import React from 'react'
 import T from 'prop-types'
 import TaskItem from './TaskItem'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 const Project = ({
   data,
@@ -12,8 +13,7 @@ const Project = ({
   createTaskHandler,
   removeTaskHandler
 }) => {
-  const { title, desc, id, taskList } = data
-
+  const { title, desc, id, taskList } = data.toJSON()
   return (
     <div className="row">
       <div className="col s12">
@@ -34,21 +34,21 @@ const Project = ({
             <h4 className="white-text">Task List</h4>
 
             {
-              taskList.length > 0 &&
+              taskList.size > 0 &&
               <ul className="collection scroll">
-                {taskList.map(({ idTask, idUser, done, title }) => {
-                  const taskForUser = idUser === UID
+                {taskList.valueSeq().map(task => {
+                  const taskForUser = task.get('idUser') === UID
                   return (
                     <TaskItem
-                      key={idTask}
+                      key={task.get('idTask')}
                       changeInputHandler={changeInputHandler}
                       editTaskHandler={editTaskHandler}
                       removeTaskHandler={removeTaskHandler}
                       taskForUser={taskForUser}
-                      idTask={idTask}
-                      done={done}
-                      title={title}
-                      idUser={idUser}
+                      idTask={task.get('idTask')}
+                      done={task.get('done')}
+                      title={task.get('title')}
+                      idUser={task.get('idUser')}
                     />
                   )
                 })}
@@ -81,17 +81,7 @@ const Project = ({
 }
 
 Project.propTypes = {
-  data: T.shape({
-    desc: T.string,
-    id: T.string,
-    taskList: T.arrayOf(T.shape({
-      done: T.bool,
-      idTask: T.string,
-      idUser: T.string,
-      title: T.string
-    })),
-    title: T.string
-  }).isRequired,
+  data: ImmutablePropTypes.map.isRequired,
   UID: T.string,
   deleteProjectHandler: T.func,
   editProjectHandler: T.func,

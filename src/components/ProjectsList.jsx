@@ -1,12 +1,13 @@
 import React from 'react'
 import T from 'prop-types'
 import ProjectContainer from '../containers/ProjectContainer'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 const ProjectsList = ({ projects, deleteProjectHandler }) => {
   return (
-    projects.map(data =>
+    projects.valueSeq().map(data =>
       <ProjectContainer
-        key={data.id}
+        key={data.get('id')}
         data={data}
         deleteProjectHandler={deleteProjectHandler}
       />
@@ -15,17 +16,7 @@ const ProjectsList = ({ projects, deleteProjectHandler }) => {
 }
 
 ProjectsList.propTypes = {
-  projects: T.arrayOf(T.shape({
-    desc: T.string,
-    id: T.string,
-    taskList: T.arrayOf(T.shape({
-      done: T.bool,
-      idTask: T.string,
-      idUser: T.string,
-      title: T.string
-    })),
-    title: T.string
-  })).isRequired,
+  projects: ImmutablePropTypes.orderedMapOf(ImmutablePropTypes.map).isRequired,
   deleteProjectHandler: T.func
 }
 

@@ -1,7 +1,8 @@
 import { take, call, put, fork } from 'redux-saga/effects'
 import rsf from '../instanceSagaFireBase'
-import { parseUser, transformerCollection } from '../../../utils/common'
+import { parseUser, transformerCollection, usersCollection } from '../../../utils/common'
 import actionCreators from '../../actions/actionCreators'
+import { setProjects } from '../../reducers/projectsReducer'
 import { useMessage } from '../../../utils/notification'
 
 export function * syncUserSaga () {
@@ -47,7 +48,7 @@ export function * logout () {
     yield call(rsf.auth.signOut)
     yield put(actionCreators.logout())
     yield put(actionCreators.setUsers([]))
-    yield put(actionCreators.setProjects([]))
+    yield put(setProjects([]))
     useMessage('You are logged out')
   } catch (error) {
     useMessage('You cant logged out')
@@ -70,7 +71,7 @@ export function * workerPullUsers () {
       'users',
       {
         successActionCreator: actionCreators.setUsers,
-        transform: transformerCollection
+        transform: transformerCollection.bind(null, usersCollection)
       }
     )
   } catch (error) {

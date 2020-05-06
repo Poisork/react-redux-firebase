@@ -1,7 +1,7 @@
-import actionCreators from '../../actions/actionCreators'
+import { setProjects } from '../../reducers/projectsReducer'
 import { call, fork, select } from 'redux-saga/effects'
 import rsf from '../instanceSagaFireBase'
-import { transformerCollection } from '../../../utils/common'
+import { transformerCollection, projectsCollection } from '../../../utils/common'
 import { getProjects } from '../../reducers/projectsReducer'
 import { useMessage } from '../../../utils/notification'
 
@@ -12,6 +12,7 @@ export function * workerCreateProject (payload) {
       'projects',
       { ...payload, taskList: [] }
     )
+    // yield put(createProject({ ...payload, taskList: [], id: document.id }))
     useMessage('Project created')
   } catch (error) {
     useMessage('Project can"t be created')
@@ -24,8 +25,8 @@ export function * workerPullProjects () {
       rsf.firestore.syncCollection,
       'projects',
       {
-        successActionCreator: actionCreators.setProjects,
-        transform: transformerCollection
+        successActionCreator: setProjects,
+        transform: transformerCollection.bind(null, projectsCollection)
       }
     )
   } catch (error) {
@@ -38,7 +39,7 @@ export function * workerRemoveProject (id) {
     yield call(rsf.firestore.deleteDocument, `projects/${id}`)
     useMessage('Project has been removed')
   } catch (error) {
-    useMessage('Can"t sync data')
+    useMessage('Can"t remove project')
   }
 }
 
@@ -66,13 +67,12 @@ export function * workerUpdateTask (payload) {
     yield call(rsf.firestore.updateDocument, `projects/${idProject}`, { taskList })
     useMessage('Task has been updated')
   } catch (error) {
-    useMessage('Can"t update task')
+    useMessage(error.message)
   }
 }
 
 export function * workerCreateTask ({ idProject, ...payload }) {
   let taskList = yield selectProjectTaskList(idProject)
-
   taskList = taskList.concat(payload)
   try {
     yield call(rsf.firestore.updateDocument, `projects/${idProject}`, { taskList })
@@ -95,8 +95,9 @@ export function * workerRemoveTask ({ idProject, idTask }) {
 
 function * selectProjectTaskList (idProject) {
   const projects = yield select(getProjects)
-  const [project] = projects.filter(project => project.id === idProject)
-  const { taskList } = project
+  const project = projects.get(idProject)
+  let taskList = project.get('taskList').toJS()
+  taskList = Object.values(taskList)
 
   return taskList
 }

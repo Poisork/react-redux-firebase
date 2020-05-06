@@ -8,8 +8,9 @@ const ProjectsListContainer = () => {
   const projects = useSelector(getProjects)
   const dispatch = useDispatch()
 
-  const deleteProject = useCallback(event => {
-    const { id } = event.target.dataset
+  const deleteProject = useCallback(({ target }) => {
+    let { id } = target.dataset
+    if (!id) id = target.parentElement.dataset.id
     PopupModal.confirm({
       message: 'Do you really want remove this project?',
       left: {
@@ -23,7 +24,7 @@ const ProjectsListContainer = () => {
     })
   }, [])
 
-  if (projects.length) {
+  if (projects.size) {
     return <ProjectsList projects={projects} deleteProjectHandler={deleteProject} />
   }
   return null

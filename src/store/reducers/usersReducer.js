@@ -1,7 +1,7 @@
 import { SET_USERS } from '../actions/actionTypes'
 
 const initialState = {
-  data: []
+  data: {}
 }
 
 const users = (state = initialState, action) => {

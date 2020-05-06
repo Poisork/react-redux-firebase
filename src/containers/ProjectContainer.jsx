@@ -8,10 +8,10 @@ import { uuidv4 } from '../utils/common'
 import { getUID } from '../store/reducers/authReducer'
 import { getUsers } from '../store/reducers/usersReducer'
 import Project from '../components/Project'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 const ProjectContainer = ({ data, ...props }) => {
-  const { title, desc, id } = data
-
+  const { title, desc, id } = data.toJS()
   const dispatch = useDispatch()
   const UID = useSelector(getUID)
   const users = useSelector(getUsers)
@@ -81,24 +81,16 @@ const ProjectContainer = ({ data, ...props }) => {
       editTaskHandler={editTaskHandler}
       createTaskHandler={createTaskHandler}
       removeTaskHandler={removeTaskHadler}
-      {...props}
+      {...props}s
     />
   )
 }
 
 ProjectContainer.propTypes = {
-  data: T.shape({
-    desc: T.string,
-    id: T.string,
-    taskList: T.arrayOf(T.shape({
-      done: T.bool,
-      idTask: T.string,
-      idUser: T.string,
-      title: T.string
-    })),
-    title: T.string
-  }).isRequired,
+  data: ImmutablePropTypes.map.isRequired,
   deleteProjectHandler: T.func
 }
 
-export default ProjectContainer
+const immutableDataIsEqual = (prevProps, nextProps) => prevProps.data.equals(nextProps.data)
+
+export default React.memo(ProjectContainer, immutableDataIsEqual)

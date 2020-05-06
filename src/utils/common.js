@@ -1,11 +1,36 @@
-export const transformerCollection = data => {
-  const res = []
-  data.forEach(collection =>
-    res.push({
-      id: collection.id,
-      ...collection.data()
-    })
-  )
+import { Map, OrderedMap } from 'immutable'
+
+export const transformerCollection = (collectionHandler, data) => {
+  let res = OrderedMap()
+  data.forEach(collection => {
+    res = res.set(collection.id, collectionHandler(collection))
+  })
+  return res
+}
+
+export function usersCollection (collection) {
+  return Map({
+    id: collection.id,
+    ...collection.data()
+  })
+}
+
+export function projectsCollection (collection) {
+  return Map({
+    id: collection.id,
+    ...collection.data(),
+    taskList: transformArrayToOrderMap(collection.data().taskList)
+  })
+}
+
+const transformArrayToOrderMap = arr => {
+  let res = OrderedMap()
+
+  arr.forEach(({ idTask, ...item }) => (
+    res = res.set(idTask,
+      Map({ idTask, ...item })
+    )
+  ))
   return res
 }
 

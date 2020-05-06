@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import { useHandlerClickForm } from '../hooks/useFormHook'
 import T from 'prop-types'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 import ReactAutocomplete from 'react-autocomplete'
 
 const ComponentTaskForm = ({ closeHandler, data, idProject, createTask, users }) => {
@@ -15,12 +16,14 @@ const ComponentTaskForm = ({ closeHandler, data, idProject, createTask, users })
 
   const messageSubmit = createTask ? 'CREATE TASK' : 'EDIT TASK'
   const typeSubmit = createTask ? 'create_task' : 'update_task'
-  const items = users.map(user => {
+
+  const items = users.valueSeq().map(user => {
     const item = {}
-    item.id = user.id
-    item.label = user.email
+    item.id = user.get('id')
+    item.label = user.get('email')
     return item
   })
+
   const firstFIeldRef = useRef()
 
   useEffect(() => {
@@ -73,7 +76,7 @@ const ComponentTaskForm = ({ closeHandler, data, idProject, createTask, users })
               name="idUser"
               control={control}
               defaultValue={idUser}
-              items={items}
+              items={items.toJS()}
               getItemValue={item => item.id}
               renderItem={(item, highlighted) =>
                 <div
@@ -118,7 +121,7 @@ ComponentTaskForm.propTypes = {
   idProject: T.string.isRequired,
   createTask: T.bool.isRequired,
   closeHandler: T.func.isRequired,
-  users: T.array
+  users: ImmutablePropTypes.orderedMapOf(ImmutablePropTypes.map).isRequired
 }
 
 export default ComponentTaskForm

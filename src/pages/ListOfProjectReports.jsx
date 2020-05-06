@@ -1,20 +1,20 @@
 import React from 'react'
-import T from 'prop-types'
 import ProjectReport from '../components/ProjectReport'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 const ListOfProjectReports = ({ projects }) => {
   return (
     <ul className="collection with-header">
       <li className="collection-header center"><h4>Projects report</h4></li>
-      {projects.map(project => {
-        const countTasks = project.taskList.length
-        const countCompletedTask = project.taskList.filter(task => task.done).length
+      {projects.valueSeq().map(project => {
+        const countTasks = project.get('taskList').size
+        const countCompletedTask = project.get('taskList').filter(task => task.get('done')).size
         const allTaskCompleted = countCompletedTask === countTasks && countTasks > 0
 
         return (
           <ProjectReport
-            key={project.id}
-            title={project.title}
+            key={project.get('id')}
+            title={project.get('title')}
             countTasks={countTasks}
             countCompletedTask={countCompletedTask}
             allTaskCompleted={allTaskCompleted}
@@ -26,17 +26,7 @@ const ListOfProjectReports = ({ projects }) => {
 }
 
 ListOfProjectReports.propTypes = {
-  projects: T.arrayOf(T.shape({
-    desc: T.string,
-    id: T.string,
-    taskList: T.arrayOf(T.shape({
-      done: T.bool,
-      idTask: T.string,
-      idUser: T.string,
-      title: T.string
-    })),
-    title: T.string
-  })).isRequired
+  projects: ImmutablePropTypes.orderedMapOf(ImmutablePropTypes.map).isRequired
 }
 
 export default ListOfProjectReports
